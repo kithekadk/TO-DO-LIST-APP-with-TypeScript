@@ -19,3 +19,7 @@
     justify-content: center;
     gap : 30px;
 }
+
+.uncompletedDiv{
+    background-color: grey;
+}
