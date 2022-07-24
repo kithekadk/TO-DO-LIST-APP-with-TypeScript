@@ -1,0 +1,21 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+.header {
+    display: flex;
+    justify-content: center;
+    padding : 15px
+}
+
+.formContainer {
+    display: flex;
+    justify-content: center;
+    
+}
+
+.displayTask {
+    display: flex;
+    justify-content: center;
+    gap : 30px;
+}
