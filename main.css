@@ -59,6 +59,12 @@ body{
     padding:20px;
     border-radius: 0px 20px 20px 0px;
 }
+/* .uncompletedDiv:empty:before {
+    content: "to tasks yet";
+}
+.uncompletedDiv.empty{
+    background-color: aqua;
+} */
 
 .uncompletedDiv div{
     margin-bottom:10px ;

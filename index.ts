@@ -1,10 +1,6 @@
 window.addEventListener('load' , () =>{
 
 const formContainer =document.querySelector<HTMLFormElement>(".taskform");
-// let uncompletedDiv = document.querySelector<HTMLDivElement>(".uncompletedDiv");
-// if ($(".uncompletedDiv").text().length ==0){
-//     alert("no items in div");
-// }
 const task =document.querySelector<HTMLInputElement>(".task");
 const description =document.querySelector<HTMLInputElement>(".description");
 const due =document.querySelector<HTMLInputElement>(".deadline");
@@ -22,11 +18,11 @@ class uncompletedTodo implements toDo{
         public taskTitle: string ,
         public taskDescription: string ,
         public deadline: string ,
-        public complete=true
+        public complete=false,
         ){}
     
     isComplete(){
-        if(this.complete===true){
+        if(this.complete===false){
             Pending();            
         }else{
             markDone();
@@ -36,6 +32,17 @@ class uncompletedTodo implements toDo{
 }
 // definition of arrays
 const pendingTasklist: uncompletedTodo[] = [];
+if(pendingTasklist.length===0){
+    let defaultText= document.createElement("p")
+    defaultText.textContent="There are no tasks currently!!!"
+    let uncompletedTasks= document.querySelector(".uncompletedDiv")
+    uncompletedTasks.appendChild(defaultText);
+}else{
+    let newText= document.createElement("p")
+    newText.textContent="There are no tasks currently!!!"
+    let uncompletedTasks= document.querySelector(".uncompletedDiv")
+    uncompletedTasks.appendChild(newText);
+}
 const completedTaskList: uncompletedTodo[]= [];
 
 formContainer.addEventListener("submit",(e) =>{
@@ -47,15 +54,14 @@ formContainer.addEventListener("submit",(e) =>{
 
         } else{
         let newTask =new uncompletedTodo (
-            `${task.value}`, 
-            `${description.value}`,
-            `${due.value}`); 
+            task.value, 
+            description.value,
+            due.value); 
 
         pendingTasklist.push(newTask);
             
         newTask.isComplete();
-        
-            // Pending()                  
+                         
             task.value="";
             description.value="";
             due.value= "";              
@@ -88,17 +94,20 @@ function Pending(){
 
     const check = document.createElement("input");
     check.type="checkbox";
-    check.checked=uncompletedTodo.prototype.complete;    
+    check.checked=false; 
+    check.addEventListener("click", ()=>{
+        let completedList= document.querySelector(".completedList")
+        completedList.appendChild(taskDetails)
+    })   
 
     const btndelete= document.createElement ("button");
     btndelete.textContent ="delete";
+    // btndelete.addEventListener("click", ()=>{
+    //     pendingTasklist.pop();
+    // })
 
     const btnupdate= document.createElement ("button");
     btnupdate.textContent ="update";
-
-    const markAsDone= document.createElement ("button");
-    markAsDone.textContent ="Mark As Done";
-    markAsDone.setAttribute('onclick', `markDone()`) 
 
     const taskDetails =document.createElement("div");
 
@@ -112,7 +121,6 @@ function Pending(){
     taskDetails.appendChild(checklabel)
     taskDetails.appendChild(btndelete);
     taskDetails.appendChild(btnupdate);
-    taskDetails.appendChild(markAsDone);
 
 
     let uncompletedDiv= document.querySelector(".uncompletedDiv")
