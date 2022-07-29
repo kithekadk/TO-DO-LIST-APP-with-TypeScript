@@ -6,7 +6,7 @@ window.addEventListener('load', () => {
     const due = document.querySelector(".deadline");
     // uncompletedTodo class
     class uncompletedTodo {
-        constructor(taskTitle = task.value, taskDescription = description.value, deadline = due.value, complete = false) {
+        constructor(taskTitle = task.value, taskDescription = description.value, deadline = due.value, complete) {
             this.taskTitle = taskTitle;
             this.taskDescription = taskDescription;
             this.deadline = deadline;
@@ -16,9 +16,14 @@ window.addEventListener('load', () => {
             if (this.complete === false) {
                 Pending();
             }
-            else {
-                Completed();
-            }
+        }
+    }
+    class completedTodo {
+        constructor(taskTitle = task.value, taskDescription = description.value, deadline = due.value, complete) {
+            this.taskTitle = taskTitle;
+            this.taskDescription = taskDescription;
+            this.deadline = deadline;
+            this.complete = complete;
         }
     }
     // definition of arrays
@@ -31,7 +36,7 @@ window.addEventListener('load', () => {
             console.log("some task details missing");
         }
         else {
-            let newTask = new uncompletedTodo(task.value, description.value, due.value);
+            let newTask = new uncompletedTodo(task.value, description.value, due.value, false);
             pendingTasklist.push(newTask);
             newTask.isComplete();
             task.value = "";
@@ -42,7 +47,6 @@ window.addEventListener('load', () => {
     function deleteTask(index) {
         pendingTasklist.splice(index, 1);
         Pending();
-        Completed();
     }
     function UpCert(index) {
         if (index !== undefined) {
@@ -58,7 +62,7 @@ window.addEventListener('load', () => {
                     pendingTasklist[index].taskTitle = due.value;
                 }
                 else {
-                    let newTask = new uncompletedTodo(task.value, description.value, due.value);
+                    let newTask = new uncompletedTodo(task.value, description.value, due.value, false);
                     pendingTasklist.push(newTask);
                     task.value = "";
                     description.value = "";
@@ -67,9 +71,10 @@ window.addEventListener('load', () => {
             });
         }
         else {
-            console.log("cant work");
+            console.log("task doesnt exist");
         }
     }
+    // Completed tasks function
     function Pending() {
         const taskItem = document.querySelector(".uncompletedDiv");
         while (taskItem.hasChildNodes()) {
@@ -86,18 +91,7 @@ window.addEventListener('load', () => {
             check.type = "checkbox";
             check.checked = false;
             check.addEventListener("click", () => {
-                // let completedDiv= document.querySelector(".completedDiv")
-                // completedDiv.appendChild(taskDetails)
-                // checklabel.textContent="Task Completed"
-                // checklabel.style.color="white";
-                // btnupdate.style.visibility="hidden"
-                let filterthis = pendingTasklist.filter((el) => el.complete === true);
-                if (filterthis) {
-                    completedTaskList.concat(filterthis);
-                }
-                Completed();
-                pendingTasklist.splice(index, 1);
-                Pending();
+                MarkasRead(index);
             });
             const btndelete = document.createElement("button");
             btndelete.textContent = "delete";
@@ -112,6 +106,7 @@ window.addEventListener('load', () => {
             const buttonsdiv = document.createElement('p');
             buttonsdiv.appendChild(btndelete);
             buttonsdiv.appendChild(btnupdate);
+            //container of all tasks created in this function
             const taskDetails = document.createElement("div");
             const checklabel = document.createElement("label");
             checklabel.textContent = "Completed? ";
@@ -125,39 +120,47 @@ window.addEventListener('load', () => {
             uncompletedDiv.appendChild(taskDetails);
         });
     }
-    function Completed() {
-        const taskItem = document.querySelector(".completedDiv");
-        while (taskItem.hasChildNodes()) {
-            taskItem.removeChild(taskItem.firstChild);
+    function MarkasRead(index) {
+        let taskOut = pendingTasklist[index];
+        completedTaskList.push(taskOut);
+        const titleOut = document.createElement("p");
+        titleOut.textContent = pendingTasklist[index].taskTitle;
+        const descOut = document.createElement("p");
+        descOut.textContent = pendingTasklist[index].taskDescription;
+        const deadlineOut = document.createElement("p");
+        deadlineOut.textContent = pendingTasklist[index].deadline;
+        // deadline calculation
+        const duewhen = new Date(deadlineOut.textContent);
+        const submitNow = new Date();
+        const metdeadline = (Math.abs(duewhen.getTime())) - (submitNow.getTime());
+        const theDays = (metdeadline / (1000 * 60 * 60 * 24));
+        const checkdeadline = document.createElement("p");
+        checkdeadline.textContent = (`Task completed ${theDays} day(s) early`);
+        function roundNumber(num, decimal_digit) {
+            let powerOften = Math.pow(10, decimal_digit);
+            let result = Math.round(num * powerOften) / powerOften;
+            // output.innerHTML = result;
+            checkdeadline.textContent = (`Task completed ${result} day(s) early`);
         }
-        pendingTasklist.forEach(({ taskTitle, taskDescription, deadline }, index) => {
-            const duty = document.createElement("p");
-            duty.textContent = taskTitle;
-            const descp = document.createElement("p");
-            descp.textContent = taskDescription;
-            const duep = document.createElement("p");
-            duep.textContent = deadline;
-            const warning = document.createElement("p");
-            warning.textContent = "task already completed";
-            const check = document.createElement("input");
-            check.type = "checkbox";
-            check.checked = true;
-            check.addEventListener("click", () => {
-                let completedDiv = document.querySelector(".completedDiv");
-                completedDiv.appendChild(warning);
-            });
-            const btndelete = document.createElement("button");
-            btndelete.textContent = "delete";
-            btndelete.addEventListener('click', () => {
-                deleteTask(index);
-            });
-            const taskDetails = document.createElement("div");
-            taskDetails.appendChild(duty);
-            taskDetails.appendChild(descp);
-            taskDetails.appendChild(duep);
-            taskDetails.appendChild(btndelete);
-            let completedDiv = document.querySelector(".completedDiv");
-            completedDiv.appendChild(taskDetails);
+        roundNumber(theDays, 1);
+        const btndelete2 = document.createElement("button");
+        btndelete2.textContent = "delete";
+        btndelete2.style.padding = "5px";
+        btndelete2.addEventListener('click', () => {
+            btndelete2.parentElement.parentElement.removeChild(listname);
         });
+        pendingTasklist.splice(index, 1);
+        const listname = document.createElement("div");
+        listname.style.border = "solid 4px white";
+        listname.style.margin = "5px";
+        listname.style.padding = "10px";
+        listname.appendChild(titleOut);
+        listname.appendChild(descOut);
+        listname.appendChild(deadlineOut);
+        listname.appendChild(checkdeadline);
+        listname.appendChild(btndelete2);
+        const completedDiv = document.querySelector(".completedDiv");
+        completedDiv.appendChild(listname);
+        taskOut.isComplete();
     }
 });

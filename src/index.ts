@@ -16,21 +16,25 @@ interface toDo  {
 // uncompletedTodo class
 class uncompletedTodo implements toDo{
     constructor (
+        public taskTitle: string = task.value ,
+        public taskDescription: string = description.value,
+        public deadline: string = due.value,
+        public complete:false,
+        ){}
+    isComplete(){
+        if(this.complete===false){
+            Pending();             
+        }
+    }
+}
+class completedTodo implements toDo{
+    constructor (
         public taskTitle: string =task.value ,
         public taskDescription: string = description.value,
         public deadline: string = due.value,
-        public complete=false,
+        public complete:boolean,
         ){}
-    
-    isComplete(){
-        if(this.complete===false){
-            Pending();            
-        }else{
-            Completed();
-        }
-
     }
-}
 // definition of arrays
 const pendingTasklist: uncompletedTodo[] = [];
 const completedTaskList: uncompletedTodo[] = [];
@@ -43,10 +47,11 @@ formContainer.addEventListener("submit",(e) =>{
             console.log("some task details missing");
 
         } else{
+        
         let newTask =new uncompletedTodo (
             task.value, 
             description.value,
-            due.value ); 
+            due.value, false ); 
             
         pendingTasklist.push(newTask);
        
@@ -60,10 +65,9 @@ formContainer.addEventListener("submit",(e) =>{
 })
 
 function deleteTask(index:number){
-    pendingTasklist.splice(index,1)
+    pendingTasklist.splice(index,1) 
     
     Pending()
-    Completed()
 }
 
 function UpCert(index:number){
@@ -84,7 +88,7 @@ function UpCert(index:number){
             let newTask =new uncompletedTodo (
                 task.value, 
                 description.value,
-                due.value ); 
+                due.value, false ); 
                 
             pendingTasklist.push(newTask);
             task.value="";
@@ -93,11 +97,11 @@ function UpCert(index:number){
         }
     })  
     }else{
-        console.log("cant work")
+        console.log("task doesnt exist")
     }
    
 }
-
+// Completed tasks function
 function Pending(){
     const taskItem =document.querySelector(".uncompletedDiv")
 
@@ -122,21 +126,7 @@ function Pending(){
         check.type="checkbox";
         check.checked=false; 
         check.addEventListener("click", ()=>{
-            // let completedDiv= document.querySelector(".completedDiv")
-            // completedDiv.appendChild(taskDetails)
-            // checklabel.textContent="Task Completed"
-            // checklabel.style.color="white";
-            // btnupdate.style.visibility="hidden"
-
-            let filterthis = pendingTasklist.filter((el)=>el.complete===true)
-            if (filterthis){
-                completedTaskList.concat(filterthis)
-            }
-            Completed();
-            pendingTasklist.splice(index,1);
-        
-            Pending()
-           
+            MarkasRead(index)
         })  
     
         const btndelete= document.createElement ("button");
@@ -155,6 +145,7 @@ function Pending(){
         buttonsdiv.appendChild(btndelete)
         buttonsdiv.appendChild(btnupdate)
 
+    //container of all tasks created in this function
         const taskDetails =document.createElement("div");
 
     
@@ -168,62 +159,66 @@ function Pending(){
         taskDetails.appendChild(checklabel)
         taskDetails.appendChild(buttonsdiv)    
     
-        let uncompletedDiv= document.querySelector(".uncompletedDiv")
+        let uncompletedDiv= document.querySelector(".uncompletedDiv");
         uncompletedDiv.appendChild(taskDetails)
     })
 }
 
-function Completed(){
-    const taskItem =document.querySelector(".completedDiv")
+function MarkasRead(index:number){
 
-    while (taskItem.hasChildNodes()) {
-        taskItem.removeChild(taskItem.firstChild);
-      }
+    let taskOut = pendingTasklist[index]
+            
+            
+    completedTaskList.push(taskOut);
 
-    pendingTasklist.forEach(({taskTitle,
-        taskDescription,
-        deadline},index:number) => {
+    const titleOut = document.createElement("p");
+    titleOut.textContent = pendingTasklist[index].taskTitle;
 
-        const duty= document.createElement("p");
-        duty.textContent=taskTitle;
+    const descOut = document.createElement("p");
+    descOut.textContent = pendingTasklist[index].taskDescription ;
+
+    const deadlineOut = document.createElement("p");
+    deadlineOut.textContent = pendingTasklist[index].deadline;
+    // deadline calculation
+    const duewhen = new Date(deadlineOut.textContent)
+    const submitNow = new Date()
     
-        const descp= document.createElement("p");
-        descp.textContent=taskDescription;
+    const metdeadline = (Math.abs(duewhen.getTime()))-(submitNow.getTime());
+    const theDays = (metdeadline/(1000 * 60 * 60 * 24))
+    const checkdeadline = document.createElement("p");
+    checkdeadline.textContent = (`Task completed ${theDays} day(s) early`)
     
-        const duep= document.createElement("p");
-        duep.textContent=deadline;
+    function roundNumber(num:number, decimal_digit:number) {
+        let powerOften = Math.pow( 10, decimal_digit );
+        let result = Math.round( num * powerOften ) / powerOften;
+        // output.innerHTML = result;
+        checkdeadline.textContent = (`Task completed ${result} day(s) early`)
+     }
+    roundNumber(theDays,1 )
+    
 
-        const warning=document.createElement("p");
-        warning.textContent="task already completed";
-
-        const check = document.createElement("input");
-        check.type="checkbox";
-        check.checked=true; 
-        check.addEventListener("click", ()=>{
-            let completedDiv= document.querySelector(".completedDiv")
-            completedDiv.appendChild(warning)
-        })  
-
-        const btndelete= document.createElement ("button");
-        btndelete.textContent ="delete";
-        btndelete.addEventListener('click', () =>{
-            deleteTask(index);
-        })
-        const taskDetails =document.createElement("div");
-    
-        taskDetails.appendChild(duty);
-        taskDetails.appendChild(descp);
-        taskDetails.appendChild(duep);
-        taskDetails.appendChild(btndelete);
-    
-    
-        let completedDiv = document.querySelector(".completedDiv")
-        completedDiv.appendChild(taskDetails)
+    const btndelete2= document.createElement("button");
+    btndelete2.textContent ="delete";
+    btndelete2.style.padding="5px";
+    btndelete2.addEventListener('click', () =>{
+        btndelete2.parentElement.parentElement.removeChild(listname)
     })
+    
+    pendingTasklist.splice(index,1);
 
+    const listname = document.createElement("div");
+    listname.style.border="solid 4px white"
+    listname.style.margin="5px"
+    listname.style.padding="10px"
+    listname.appendChild(titleOut);
+    listname.appendChild(descOut);
+    listname.appendChild(deadlineOut);
+    listname.appendChild(checkdeadline)
+    listname.appendChild(btndelete2);
+
+    const completedDiv = document.querySelector(".completedDiv");
+    completedDiv.appendChild(listname)
+    taskOut.isComplete();
 
 }
 })
-
-
-

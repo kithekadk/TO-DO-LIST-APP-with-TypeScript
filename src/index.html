@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo list app with ts</title>
+
+    <link rel="stylesheet" href="main.css">
+    <script src="./dist/index.js"></script>
+</head>
+<body>
+<div class="allcontents">
+    <div class="header"><h1>TO DO LIST </h1></div>
+    
+    <div class="allBodyContainers">
+        <div class="formContainer">
+            <form class="taskform">
+                <h2>NOTE YOUR TASK HERE</h2>
+                Input task title: <br>
+                <input type="text" class="task"  required/> <br>
+                Input task description <br>
+                <textarea name="" class="description" cols="50" rows="10" required></textarea>
+                Input task deadline <br>
+                <input type="date" class="deadline" required min="2022-07-29"/> <br>
+                <input type="submit" class="submit" value="SUBMIT" />
+                <input type="reset" value="RESET">
+            </form>
+        </div>
+
+        <div class="displayTasks">
+            
+                <div> <h3 style="text-align: center;">PENDING TASKS</h3>
+                    <div class="uncompletedDiv">
+                    
+                    </div>
+                </div>
+
+                <div><h3 style="text-align: center;">COMPLETED TASKS</h3>
+                    <div class="completedDiv">
+                    
+                    </div>
+                </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
