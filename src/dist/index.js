@@ -4,6 +4,16 @@ window.addEventListener('load', () => {
     const task = document.querySelector(".task");
     const description = document.querySelector(".description");
     const due = document.querySelector(".deadline");
+    const checkdiv1 = document.querySelector(".uncompletedDiv");
+    const checkdiv2 = document.querySelector(".completedDiv");
+    function checkIFEmpty() {
+        if (checkdiv1.firstChild) {
+            const disclaimer = document.createElement("p");
+            disclaimer.textContent = "No Tasks Available Currently!";
+            checkdiv1.appendChild(disclaimer);
+        }
+    }
+    checkIFEmpty();
     // uncompletedTodo class
     class uncompletedTodo {
         constructor(taskTitle = task.value, taskDescription = description.value, deadline = due.value, complete) {
@@ -92,6 +102,7 @@ window.addEventListener('load', () => {
             check.checked = false;
             check.addEventListener("click", () => {
                 MarkasRead(index);
+                Pending();
             });
             const btndelete = document.createElement("button");
             btndelete.textContent = "delete";
@@ -120,6 +131,7 @@ window.addEventListener('load', () => {
             uncompletedDiv.appendChild(taskDetails);
         });
     }
+    // Called by the checkbox
     function MarkasRead(index) {
         let taskOut = pendingTasklist[index];
         completedTaskList.push(taskOut);
@@ -139,7 +151,6 @@ window.addEventListener('load', () => {
         function roundNumber(num, decimal_digit) {
             let powerOften = Math.pow(10, decimal_digit);
             let result = Math.round(num * powerOften) / powerOften;
-            // output.innerHTML = result;
             checkdeadline.textContent = (`Task completed ${result} day(s) early`);
         }
         roundNumber(theDays, 1);

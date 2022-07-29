@@ -4,7 +4,16 @@ const formContainer =document.querySelector<HTMLFormElement>(".taskform");
 const task =document.querySelector<HTMLInputElement>(".task");
 const description =document.querySelector<HTMLInputElement>(".description");
 const due =document.querySelector<HTMLInputElement>(".deadline");
-
+const checkdiv1 = document.querySelector<HTMLDivElement>(".uncompletedDiv")
+const checkdiv2 = document.querySelector<HTMLDivElement>(".completedDiv")
+function checkIFEmpty(){
+   if (checkdiv1.firstChild){
+    const disclaimer = document.createElement("p");
+    disclaimer.textContent="No Tasks Available Currently!";
+    checkdiv1.appendChild(disclaimer)
+} 
+}
+checkIFEmpty();
 
 // interface used to create the classes
 interface toDo  {
@@ -126,7 +135,8 @@ function Pending(){
         check.type="checkbox";
         check.checked=false; 
         check.addEventListener("click", ()=>{
-            MarkasRead(index)
+            MarkasRead(index);
+           Pending() 
         })  
     
         const btndelete= document.createElement ("button");
@@ -145,6 +155,8 @@ function Pending(){
         buttonsdiv.appendChild(btndelete)
         buttonsdiv.appendChild(btnupdate)
 
+
+
     //container of all tasks created in this function
         const taskDetails =document.createElement("div");
 
@@ -159,10 +171,14 @@ function Pending(){
         taskDetails.appendChild(checklabel)
         taskDetails.appendChild(buttonsdiv)    
     
-        let uncompletedDiv= document.querySelector(".uncompletedDiv");
+        let uncompletedDiv= document.querySelector(".uncompletedDiv"); 
         uncompletedDiv.appendChild(taskDetails)
+       
     })
+
 }
+
+// Called by the checkbox
 
 function MarkasRead(index:number){
 
@@ -191,7 +207,6 @@ function MarkasRead(index:number){
     function roundNumber(num:number, decimal_digit:number) {
         let powerOften = Math.pow( 10, decimal_digit );
         let result = Math.round( num * powerOften ) / powerOften;
-        // output.innerHTML = result;
         checkdeadline.textContent = (`Task completed ${result} day(s) early`)
      }
     roundNumber(theDays,1 )
@@ -219,6 +234,7 @@ function MarkasRead(index:number){
     const completedDiv = document.querySelector(".completedDiv");
     completedDiv.appendChild(listname)
     taskOut.isComplete();
+    
 
 }
 })
